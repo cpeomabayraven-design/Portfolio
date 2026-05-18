@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'run_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() {
   runApp(const PortfolioApp());
@@ -300,7 +301,19 @@ class _HeroSection extends StatelessWidget {
                 label: 'Say hello',
                 icon: Icons.mail_outline_rounded,
                 c: c,
-                onTap: () {},
+                onTap: () async {
+                  final Uri emailUri = Uri(
+                    scheme: 'mailto',
+                    path: 'cpe.omabay.raven@gmail.com',
+                    query: 'subject=Hello Raven',
+                  );
+
+                  try {
+                    await launchUrl(emailUri);
+                  } catch (e) {
+                    debugPrint('Could not launch email app: $e');
+                  }
+                },
               ),
               _AvailBadge(c: c),
             ],
@@ -734,9 +747,16 @@ class _ContactSection extends StatelessWidget {
   final AppColors c;
 
   static const List<Map<String, dynamic>> links = [
-    {'label': 'Email', 'icon': Icons.mail_outline_rounded},
-    {'label': 'LinkedIn', 'icon': Icons.work_outline_rounded},
-    {'label': 'GitHub', 'icon': Icons.code_rounded},
+    {
+      'label': 'Email',
+      'icon': Icons.mail_outline_rounded,
+      'url': 'mailto:cpe.omabay.raven@gmail.com',
+    },
+    {
+      'label': 'GitHub',
+      'icon': Icons.code_rounded,
+      'url': 'https://github.com/cpeomabayraven-design',
+    },
   ];
 
   @override
@@ -749,7 +769,15 @@ class _ContactSection extends StatelessWidget {
         children: links
             .map(
               (l) => GestureDetector(
-                onTap: () {},
+                onTap: () async {
+                  final Uri url = Uri.parse(l['url'] as String);
+
+                  try {
+                    await launchUrl(url, mode: LaunchMode.externalApplication);
+                  } catch (e) {
+                    debugPrint('Could not launch URL: $e');
+                  }
+                },
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
                   padding: const EdgeInsets.symmetric(
