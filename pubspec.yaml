@@ -63,6 +63,7 @@ flutter:
   assets:
     - assets/bg.png
     - assets/cat.gif
+    - assets/resume.docx.pdf
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

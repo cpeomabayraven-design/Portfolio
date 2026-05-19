@@ -6,6 +6,15 @@ void main() {
   runApp(const PortfolioApp());
 }
 
+class Spacing {
+  static const xs = 8.0;
+  static const sm = 12.0;
+  static const md = 16.0;
+  static const lg = 24.0;
+  static const xl = 32.0;
+  static const xxl = 48.0;
+}
+
 // ─── Theme notifier ──────────────────────────────────────────────────────────
 
 class ThemeNotifier extends ChangeNotifier {
@@ -64,7 +73,18 @@ class _PortfolioAppState extends State<PortfolioApp> {
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
-const List<String> stackTags = ['Flutter', 'Dart', 'PostgreSQL'];
+const List<String> stackTags = [
+  'Flutter',
+  'Dart',
+  'PostgreSQL',
+  'Go Language',
+  'HTML',
+  'C++',
+  'Python',
+  'Java',
+  'Dockerfile',
+  'SQL',
+];
 const List<Map<String, String>> aboutItems = [
   {'label': 'Location', 'value': 'Laguna, PH', 'sub': 'Open to remote'},
   {'label': 'Experience', 'value': '4 months', 'sub': 'Web development'},
@@ -152,6 +172,7 @@ class PortfolioHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = _c(context);
+
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       color: c.bg,
@@ -159,7 +180,7 @@ class PortfolioHome extends StatelessWidget {
         backgroundColor: Colors.transparent,
         body: Stack(
           children: [
-            // ── Scrollable content ──────────────────────────────────────────
+            // ─── MAIN CONTENT ───────────────────────────────
             SingleChildScrollView(
               child: Center(
                 child: ConstrainedBox(
@@ -170,14 +191,18 @@ class PortfolioHome extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _HeroSection(themeNotifier: themeNotifier),
+                        const SizedBox(height: Spacing.sm),
                         _SectionDivider(c: c),
+
                         _StackSection(c: c),
+                        const SizedBox(height: Spacing.sm),
                         _SectionDivider(c: c),
-                        _SectionDivider(c: c),
+
                         _AboutSection(c: c),
+                        const SizedBox(height: Spacing.sm),
                         _SectionDivider(c: c),
+
                         _ContactSection(c: c),
-                        const SizedBox(height: 48),
                       ],
                     ),
                   ),
@@ -185,7 +210,7 @@ class PortfolioHome extends StatelessWidget {
               ),
             ),
 
-            // ── Cat icon (top-left) ─────────────────────────────────────────
+            // ─── CAT BUTTON (TOP-LEFT FLOATING) ─────────────
             SafeArea(
               child: Padding(
                 padding: const EdgeInsets.only(left: 12, top: 8),
@@ -202,7 +227,7 @@ class PortfolioHome extends StatelessWidget {
                       duration: const Duration(milliseconds: 300),
                       padding: const EdgeInsets.all(6),
                       decoration: BoxDecoration(
-                        color: c.bg,
+                        color: c.surface,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(color: c.border),
                       ),
@@ -222,7 +247,6 @@ class PortfolioHome extends StatelessWidget {
     );
   }
 }
-
 // ─── Hero ─────────────────────────────────────────────────────────────────────
 
 class _HeroSection extends StatelessWidget {
@@ -246,7 +270,7 @@ class _HeroSection extends StatelessWidget {
                 height: 0.5,
                 color: c.muted,
               ),
-              const SizedBox(width: 10),
+              const SizedBox(height: Spacing.sm),
               Text(
                 'WEB DEVELOPER',
                 style: TextStyle(
@@ -261,7 +285,7 @@ class _HeroSection extends StatelessWidget {
               _ThemeToggle(notifier: themeNotifier, c: c),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: Spacing.sm),
           RichText(
             text: TextSpan(
               style: TextStyle(
@@ -280,12 +304,12 @@ class _HeroSection extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: Spacing.sm),
           Text(
             'I build thoughtful web products — from pixelated interfaces to resilient backend systems. Currently open to new opportunities.',
             style: TextStyle(fontSize: 15, color: c.muted, height: 1.65),
           ),
-          const SizedBox(height: 28),
+          const SizedBox(height: Spacing.sm),
           Wrap(
             spacing: 10,
             runSpacing: 10,
@@ -295,7 +319,17 @@ class _HeroSection extends StatelessWidget {
                 label: 'View resume',
                 icon: Icons.description_outlined,
                 c: c,
-                onTap: () {},
+                onTap: () async {
+                  final Uri url = Uri.parse(
+                    'https://drive.google.com/drive/u/0/folders/1z08nqhW_CuHe4T2DGJCZuMK6HweAKqqk',
+                  );
+
+                  try {
+                    await launchUrl(url, mode: LaunchMode.externalApplication);
+                  } catch (e) {
+                    debugPrint('Could not open resume: $e');
+                  }
+                },
               ),
               _GhostButton(
                 label: 'Say hello',
@@ -379,6 +413,7 @@ class _PrimaryButton extends StatelessWidget {
     required this.c,
     required this.onTap,
   });
+
   final String label;
   final IconData icon;
   final AppColors c;
@@ -390,7 +425,7 @@ class _PrimaryButton extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           color: c.primaryBtnBg,
           borderRadius: BorderRadius.circular(8),
@@ -399,7 +434,7 @@ class _PrimaryButton extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(icon, size: 15, color: c.primaryBtnFg),
-            const SizedBox(width: 7),
+            const SizedBox(height: Spacing.sm),
             Text(
               label,
               style: TextStyle(
@@ -443,7 +478,7 @@ class _GhostButton extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(icon, size: 15, color: c.muted),
-            const SizedBox(width: 7),
+            const SizedBox(height: Spacing.sm),
             Text(
               label,
               style: TextStyle(
@@ -480,7 +515,7 @@ class _AvailBadge extends StatelessWidget {
             height: 6,
             decoration: BoxDecoration(color: c.green, shape: BoxShape.circle),
           ),
-          const SizedBox(width: 6),
+          const SizedBox(height: Spacing.sm),
           Text(
             'Available for work',
             style: TextStyle(
@@ -510,7 +545,7 @@ class _StackSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _SectionLabel('Stack', c: c),
-          const SizedBox(height: 16),
+          const SizedBox(height: Spacing.sm),
           Wrap(
             spacing: 8,
             runSpacing: 8,
@@ -590,7 +625,7 @@ class _ProjectCardState extends State<_ProjectCard> {
                     Expanded(
                       child: _ProjectCardContent(project: widget.project, c: c),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(height: Spacing.sm),
                     Icon(Icons.north_east_rounded, size: 16, color: c.faint),
                   ],
                 )
@@ -622,7 +657,7 @@ class _ProjectCardContent extends StatelessWidget {
           ),
           child: Icon(project['icon'] as IconData, size: 18, color: c.muted),
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: Spacing.sm),
         Text(
           project['title'] as String,
           style: TextStyle(
@@ -632,12 +667,12 @@ class _ProjectCardContent extends StatelessWidget {
             fontFamily: 'Georgia',
           ),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: Spacing.sm),
         Text(
           project['desc'] as String,
           style: TextStyle(fontSize: 13, color: c.muted, height: 1.55),
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: Spacing.sm),
         Wrap(
           spacing: 6,
           runSpacing: 6,
@@ -684,7 +719,7 @@ class _AboutSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _SectionLabel('About', c: c),
-          const SizedBox(height: 16),
+          const SizedBox(height: Spacing.sm),
           GridView.count(
             crossAxisCount: 2,
             shrinkWrap: true,
@@ -724,7 +759,7 @@ class _AboutCard extends StatelessWidget {
             item['label']!,
             style: TextStyle(fontSize: 11, color: c.faint, letterSpacing: 0.3),
           ),
-          const SizedBox(height: 3),
+          const SizedBox(height: Spacing.sm),
           Text(
             item['value']!,
             style: TextStyle(
@@ -792,7 +827,7 @@ class _ContactSection extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(l['icon'] as IconData, size: 15, color: c.muted),
-                      const SizedBox(width: 7),
+                      const SizedBox(height: Spacing.sm),
                       Text(
                         l['label'] as String,
                         style: TextStyle(fontSize: 13, color: c.muted),
