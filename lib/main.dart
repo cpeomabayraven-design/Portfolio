@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'run_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 void main() {
@@ -95,6 +94,24 @@ const List<Map<String, String>> aboutItems = [
     'sub': '& clean architecture',
   },
 ];
+const List<Map<String, dynamic>> projects = [
+  {
+    'title': 'Personal Portfolio',
+    'desc':
+        'A responsive portfolio built with Flutter showcasing skills, experience, and contact links.',
+    'icon': Icons.person_outline_rounded,
+    'tags': ['Flutter', 'UI', 'Portfolio'],
+    'featured': false,
+  },
+  {
+    'title': 'Student Interns Monitoring System',
+    'desc':
+        'A system for tracking intern attendance, hours, and department assignments with an admin dashboard.',
+    'icon': Icons.school_outlined,
+    'tags': ['Flutter', 'Monitoring', 'Admin System'],
+    'featured': false,
+  },
+];
 
 // ─── Tokens ───────────────────────────────────────────────────────────────────
 
@@ -133,7 +150,7 @@ class AppColors {
     faint: Color(0xFFAAAAAA),
     surface: Color(0xFFF5F5F3),
     surfaceHover: Color(0xFFEDEDEB),
-    bg: Color(0xFFFFFFFF),
+    bg: Color(0xFFFDFDFB),
     border: Color(0xFFE2E2DF),
     borderHover: Color(0xFFCCCCC8),
     green: Color(0xFF15803D),
@@ -202,6 +219,10 @@ class PortfolioHome extends StatelessWidget {
                         const SizedBox(height: Spacing.sm),
                         _SectionDivider(c: c),
 
+                        _ProjectsSection(c: c),
+                        const SizedBox(height: Spacing.sm),
+                        _SectionDivider(c: c),
+
                         _ContactSection(c: c),
                       ],
                     ),
@@ -218,10 +239,7 @@ class PortfolioHome extends StatelessWidget {
                   alignment: Alignment.topLeft,
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const PixelScene()),
-                      );
+                      Navigator();
                     },
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 300),
@@ -321,7 +339,7 @@ class _HeroSection extends StatelessWidget {
                 c: c,
                 onTap: () async {
                   final Uri url = Uri.parse(
-                    'https://drive.google.com/drive/u/0/folders/1z08nqhW_CuHe4T2DGJCZuMK6HweAKqqk',
+                    'https://drive.google.com/file/d/1QD0J3qx1CWKNeE97O0mgP8OLrfCRPYPC/view?usp=sharing',
                   );
 
                   try {
@@ -713,26 +731,44 @@ class _AboutSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 32),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _SectionLabel('About', c: c),
-          const SizedBox(height: Spacing.sm),
-          GridView.count(
-            crossAxisCount: 2,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-            childAspectRatio: 3,
-            children: aboutItems
-                .map((item) => _AboutCard(item: item, c: c))
-                .toList(),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        int cols;
+
+        if (constraints.maxWidth < 500) {
+          cols = 1; // mobile
+        } else if (constraints.maxWidth < 900) {
+          cols = 2; // tablet + small web
+        } else {
+          cols = 2; // keep 2 for your design consistency
+        }
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 32),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _SectionLabel('About', c: c),
+              const SizedBox(height: Spacing.sm),
+
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: cols,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  childAspectRatio: 2.4,
+                ),
+                itemCount: aboutItems.length,
+                itemBuilder: (context, index) {
+                  return _AboutCard(item: aboutItems[index], c: c);
+                },
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
@@ -771,6 +807,48 @@ class _AboutCard extends StatelessWidget {
           Text(item['sub']!, style: TextStyle(fontSize: 11, color: c.muted)),
         ],
       ),
+    );
+  }
+}
+
+// ─── Projects ────────────────────────────────────────────────────────────────────
+
+class _ProjectsSection extends StatelessWidget {
+  const _ProjectsSection({required this.c});
+  final AppColors c;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isWide = constraints.maxWidth >= 500;
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 32),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _SectionLabel('Projects', c: c),
+              const SizedBox(height: Spacing.sm),
+
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: projects.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: isWide ? 2 : 1, // 👈 THIS is your 2 columns
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  childAspectRatio: 1.25,
+                ),
+                itemBuilder: (context, index) {
+                  return _ProjectCard(project: projects[index], c: c);
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
